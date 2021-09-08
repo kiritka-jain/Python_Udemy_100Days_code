@@ -1,58 +1,9 @@
 import random
+import Words_list
+import hangman_ascii_art
 
-HANGMANPICS = ['''
-  +---+
-  |   |
-      |
-      |
-      |
-      |
-=========''', '''
-  +---+
-  |   |
-  O   |
-      |
-      |
-      |
-=========''', '''
-  +---+
-  |   |
-  O   |
-  |   |
-      |
-      |
-=========''', '''
-  +---+
-  |   |
-  O   |
- /|   |
-      |
-      |
-=========''', '''
-  +---+
-  |   |
-  O   |
- /|\  |
-      |
-      |
-=========''', '''
-  +---+
-  |   |
-  O   |
- /|\  |
- /    |
-      |
-=========''', '''
-  +---+
-  |   |
-  O   |
- /|\  |
- / \  |
-      |
-=========''']
 
-word_list = ['apple', 'mango', 'strawberry']
-word = random.choice(word_list)
+word = random.choice(Words_list.word_list)
 word_len = len(word)
 blanks = []
 matched_letter = ''
@@ -83,7 +34,7 @@ while chances < word_len and life_lines > 0:
         chances += 1
         if player_letter not in word:
             life_lines -= 1
-            print(HANGMANPICS[hangman_index])
+            print(hangman_ascii_art.HANGMANPICS[hangman_index])
             hangman_index += 1
         matched_letter = letter_matching(player_letter)
         print(matched_letter)

@@ -1,0 +1,1 @@
+word_list = ['Colonel','Worcestershir', 'Mischievous','Draught','Quinoa','Onomatopoeia','Scissors','Anemone']
