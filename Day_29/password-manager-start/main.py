@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pyperclip
+import json
 
 password_dict = {}
 
@@ -16,38 +17,72 @@ def password_generator():
                'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     symbols = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')']
-    total_letters = random.randint(4,8)
-    total_symbols = random.randint(1,3)
-    total_numbers = random.randint(0,4)
+    total_letters = random.randint(4, 8)
+    total_symbols = random.randint(1, 3)
+    total_numbers = random.randint(0, 4)
     password_letter = [random.choice(letters) for _ in range(total_letters)]
     password_numbers = [random.choice(numbers) for _ in range(total_numbers)]
     password_symbols = [random.choice(symbols) for _ in range(total_symbols)]
 
-    pasword_char = password_letter+password_numbers+password_symbols
+    pasword_char = password_letter + password_numbers + password_symbols
     random.shuffle(pasword_char)
     password_string = ''
     for character in pasword_char:
-        password_string+=str(character)
-    password_entry.insert(0,password_string)
+        password_string += str(character)
+    password_entry.insert(0, password_string)
     pyperclip.copy(password_string)
+
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_password():
     website = website_entry.get()
     email = username_entry.get()
     generated_password = password_entry.get()
-    if website == '' or generated_password =='':
-        messagebox.showerror(title="field not filled",message='You have not entered the complete '
-                                                              'details, please fill them before proceeding ')
-    else:
-        is_ok = messagebox.askokcancel(title=website,message=f"Do you want to save the following "
-                                                     f"details?:\n{email}:\n{generated_password}")
-        if is_ok:
-            with open("password_manager.txt", mode='a') as password_file:
-                password_file.write(f"{website} | {email} | {generated_password}\n")
-            website_entry.delete(0,END)
-            password_entry.delete(0,END)
+    new_data = {
+        website: {
+            'email': email,
+            'password': generated_password
+        }
+    }
+    if website == '' or generated_password == '':
+        messagebox.showerror(title="field not filled", message='You have not entered the complete '
+                                                               'details, please fill them before proceeding ')
 
+    else:
+        try:
+            with open("password_manager.json", mode='r') as password_file:
+                # reading the file
+                data = json.load(password_file)
+        except FileNotFoundError:
+            with open("password_manager.json", mode='w') as password_file:
+                json.dump(new_data, password_file, indent=4)
+        else:
+            # upadting the data
+            data.update(new_data)
+
+            with open("password_manager.json", mode='w') as password_file:
+                # saving updated file
+                json.dump(data, password_file, indent=4)
+        finally:
+            website_entry.delete(0, END)
+            password_entry.delete(0, END)
+
+
+# ---------------------------- SEARCH PASSWORD ------------------------------- #
+def search_password():
+    website = website_entry.get()
+    try:
+        with open('password_manager.json', mode='r') as password_file:
+            data = json.load(password_file)
+    except FileNotFoundError:
+        messagebox.showinfo(title='Error:',message='This file does not exist.')
+    else:
+        if website in data:
+            email = data[website]['email']
+            corres_password = data[website]['password']
+            messagebox.showinfo(title=website, message=f"email:{email}\npassword:{corres_password}")
+        else:
+            messagebox.showinfo(title='Error',message='Password information for this site does not exist in the data.')
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -66,8 +101,8 @@ website_label.grid(column=0, row=1)
 
 # Website Entry
 website_entry = Entry()
-website_entry.config(width=35)
-website_entry.grid(column=1, row=1, columnspan=2)
+website_entry.config(width=21)
+website_entry.grid(column=1, row=1)
 website_entry.focus()
 
 # Email/Username Label
@@ -90,8 +125,12 @@ password_entry.config(width=21)
 password_entry.grid(column=1, row=3)
 
 # Generate Password Button
-gen_password = Button(text='Generate Password',command= password_generator)
+gen_password = Button(text='Generate Password', command=password_generator)
 gen_password.grid(column=2, row=3)
+
+# Search Button
+search_button = Button(text='Search', width=13, command=search_password)
+search_button.grid(column=2, row=1)
 
 # Add Button
 add_button = Button(text='Add', command=save_password)
