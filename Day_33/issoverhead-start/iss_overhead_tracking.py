@@ -48,7 +48,7 @@ while True:
     if iss_position and is_night():
         port = 587
         sender_email = "timmyturtle460@gmail.com"
-        password = 'qwerty9876()'
+        password = '**********'
 
         context = ssl.create_default_context()
         connection = smtplib.SMTP("smtp.gmail.com",port)
