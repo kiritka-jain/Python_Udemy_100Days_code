@@ -8,8 +8,8 @@ api_key = os.environ.get("api_key")
 my_lat = 10.222670
 my_long = 93.243011
 maximum_hr = 12
-account_sid = 'bfrwufqwjdgye546ASEDF'
-auth_token = os.environ.get("auth_token")
+# account_sid = 'bfrwufqwjdgye546ASEDF'
+# auth_token = os.environ.get("auth_token")
 parameters = {
     'lat': my_lat,
     'lon': my_long,
@@ -27,12 +27,13 @@ for hr in range(maximum_hr):
         will_rain = True
 
 if will_rain:
-    # print("Bring an umbrella.")
-    client = Client(account_sid,auth_token)
-    message = client.messages\
-            .create(
-        body='Bring an Umbrella, it will ☔️',
-        from= '+123456789',
-        to = '+987654321'
-    )
-    print(message.status)
+     print("Bring an umbrella.")
+## Get rain alert message
+    # client = Client(account_sid,auth_token)
+    # message = client.messages\
+    #         .create(
+    #     body='Bring an Umbrella, it will ☔️',
+    #     from= '+123456789',
+    #     to = '+987654321'
+    # )
+    # print(message.status)
